@@ -9,6 +9,7 @@ TagManager:
   - Ladder
   - Zipline
   - EndZipline
+  - Sound
   layers:
   - Default
   - TransparentFX
