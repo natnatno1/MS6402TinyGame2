@@ -51,11 +51,15 @@ public class PlayerController : MonoBehaviour {
     public Transform EndZipline;
     public Transform StartZipline;
 
+    public Vector3 Respawn_Position;
+
 
 	void Start () {
 		animator = GetComponent<Animator> ();
 		cameraT = Camera.main.transform;
 		controller = GetComponent<CharacterController> ();
+        Respawn_Position = transform.position;
+
 	}
 
 	void Update () {
@@ -103,6 +107,11 @@ public class PlayerController : MonoBehaviour {
             UseZipline();
         }
 
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
     }
 
 	bool freeze;
@@ -114,10 +123,10 @@ public class PlayerController : MonoBehaviour {
             float targetSpeed = ((running) ? runSpeed : walkSpeed) * inputDir.magnitude;
             currentSpeed = Mathf.SmoothDamp(currentSpeed, targetSpeed, ref speedSmoothVelocity, GetModifiedSmoothTime(speedSmoothTime));
 
-            if (Input.GetKeyDown(KeyCode.E) && !animator.applyRootMotion && running && animator.GetFloat("speedPercent") > 0.5f)
-            {
-                animator.CrossFade("Slide", 0.1f);
-            }
+            //if (Input.GetKeyDown(KeyCode.E) && !animator.applyRootMotion && running && animator.GetFloat("speedPercent") > 0.5f)
+            //{
+            //    animator.CrossFade("Slide", 0.1f);
+            //}
 
             velocityY += Time.deltaTime * gravity;
             Vector3 velocity = transform.forward * currentSpeed + Vector3.up * velocityY;
@@ -302,6 +311,13 @@ public class PlayerController : MonoBehaviour {
             Zipline = false;
             EndZipline = null;
         }
+
+        else if (other.gameObject.tag == "Ground")
+        {
+            gameObject.GetComponent<CharacterController>().enabled = false;
+            transform.position = Respawn_Position;
+            gameObject.GetComponent<CharacterController>().enabled = true;
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -325,7 +341,8 @@ public class PlayerController : MonoBehaviour {
             
         }
         
-
     }
+
+
 
 }
